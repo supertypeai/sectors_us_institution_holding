@@ -12,6 +12,7 @@ df = df.drop_duplicates()
 df.rename(columns={'company': 'institution'}, inplace=True)
 
 def get_instituion_holding_data(row):
+  print(row['cik'], row['institution'])
   data = find(row['cik']).get_filings(form="13F-HR")[0].obj()
   accesion_number = data.filing.accession_no
   report_period = data.primary_form_information.report_period
