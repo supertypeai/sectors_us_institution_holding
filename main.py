@@ -20,10 +20,9 @@ def get_instituion_holding_data(row):
   total_holding = data.primary_form_information.summary_page.total_holdings
   return pd.Series([accesion_number, report_period, filing_date, total_value, total_holding], index = ['last_accesion_number','last_report_period','last_filing_date','total_value','total_holding'])
 
-df2 = df[:10]
-new_columns = df2.apply(get_instituion_holding_data, axis=1)
+new_columns = df.apply(get_instituion_holding_data, axis=1)
 
-df3 = pd.concat([df2, new_columns], axis=1)
-df3[['last_report_period','last_filing_date']] = df3[['last_report_period','last_filing_date']].apply(pd.to_datetime)
-df3['updated_on'] = pd.Timestamp.now()
-df3.to_csv('institutional_profile.csv', index = False)
+final_df = pd.concat([df, new_columns], axis=1)
+final_df[['last_report_period','last_filing_date']] = final_df[['last_report_period','last_filing_date']].apply(pd.to_datetime)
+final_df['updated_on'] = pd.Timestamp.now()
+final_df.to_csv('institutional_profile.csv', index = False)
