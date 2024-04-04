@@ -53,10 +53,10 @@ def get_institution_holding_data(df_chunk):
         filing_date = data.filing.filing_date
         total_value = data.primary_form_information.summary_page.total_value
         total_holding = data.primary_form_information.summary_page.total_holdings
-        results.append([accesion_number, report_period, filing_date, total_value, total_holding])
-    return pd.DataFrame(results, columns=['last_accesion_number', 'last_report_period', 'last_filing_date', 'total_value', 'total_holding'])
+        results.append([row['cik'], row['institution'], accesion_number, report_period, filing_date, total_value, total_holding])
+    return pd.DataFrame(results, columns=['cik', 'institution', 'last_accesion_number', 'last_report_period', 'last_filing_date', 'total_value', 'total_holding'])
 
-batch_size = 20
+batch_size = 10
 chunks = [df[i:i + batch_size] for i in range(0, len(df), batch_size)]
 processed_chunks = []
 for chunk in chunks:
@@ -65,7 +65,7 @@ for chunk in chunks:
 
 new_columns = pd.concat(processed_chunks, ignore_index=True)
 
-final_df = pd.concat([df, new_columns], axis=1)
+final_df = pd.merge(df, new_columns, on=['cik', 'institution'])
 final_df[['last_report_period', 'last_filing_date']] = final_df[['last_report_period', 'last_filing_date']].apply(pd.to_datetime)
 final_df['updated_on'] = pd.Timestamp.now()
 final_df.to_csv('institutional_profile.csv', index=False)
