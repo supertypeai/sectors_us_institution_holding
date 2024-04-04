@@ -41,7 +41,6 @@ df = get_filings(form="13F-HR", year=range(current_year - 5, current_year)).to_p
 df = df[['cik', 'company']]
 df = df.drop_duplicates()
 df.rename(columns={'company': 'institution'}, inplace=True)
-df = df[:100]
 
 def get_institution_holding_data(df_chunk):
     results = []
@@ -56,7 +55,7 @@ def get_institution_holding_data(df_chunk):
         results.append([row['cik'], row['institution'], accesion_number, report_period, filing_date, total_value, total_holding])
     return pd.DataFrame(results, columns=['cik', 'institution', 'last_accesion_number', 'last_report_period', 'last_filing_date', 'total_value', 'total_holding'])
 
-batch_size = 10
+batch_size = 100
 chunks = [df[i:i + batch_size] for i in range(0, len(df), batch_size)]
 processed_chunks = []
 for chunk in chunks:
