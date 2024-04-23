@@ -51,7 +51,7 @@ all_cik = [entry['cik'] for entry in institution_profle_data]
 print(all_cik)
 
 filing_data = []
-for cik in all_cik[:5]:
+for cik in all_cik[5:]:
     for i in range(len(find(cik).get_filings(form="13F-HR"))):
     # for i in range(2):
         try:
