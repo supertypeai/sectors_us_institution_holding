@@ -54,13 +54,17 @@ filing_data = []
 for cik in all_cik[:5]:
     for i in range(len(find(cik).get_filings(form="13F-HR"))):
     # for i in range(2):
-        data = find(cik).get_filings(form="13F-HR")[i].obj()
-        filing_data.append({"cik": cik,
-                            "accession_number" :data.filing.accession_no,
-                            "report_period" :data.primary_form_information.report_period,
-                            "filing_date": data.filing.filing_date,
-                            "total_value": int(data.primary_form_information.summary_page.total_value),
-                            "total_holding": int(data.primary_form_information.summary_page.total_holdings)
-                            })
-        print(f"success {cik} {i}")
+        try:
+            data = find(cik).get_filings(form="13F-HR")[i].obj()
+            filing_data.append({"cik": cik,
+                                "accession_number" :data.filing.accession_no,
+                                "report_period" :data.primary_form_information.report_period,
+                                "filing_date": data.filing.filing_date,
+                                "total_value": int(data.primary_form_information.summary_page.total_value),
+                                "total_holding": int(data.primary_form_information.summary_page.total_holdings)
+                                })
+            print(f"success {cik} {i}")
+        except:
+            print(f"fail {cik} {i}")
+
 nc.batch_upsert(target_table="form_13f_filing", records=filing_data, conflict_columns=['accession_number'])
