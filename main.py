@@ -51,10 +51,9 @@ all_cik = [entry['cik'] for entry in institution_profle_data]
 print(all_cik)
 
 consecutive_failures = 0
-filing_data = []
-for cik in all_cik[60:500]:
+for cik in all_cik[65:500]:
+    filing_data = []
     for i in range(len(find(cik).get_filings(form="13F-HR"))):
-    # for i in range(2):
         try:
             data = find(cik).get_filings(form="13F-HR")[i].obj()
             filing_data.append({"cik": cik,
@@ -73,4 +72,5 @@ for cik in all_cik[60:500]:
                 print(f"Skipping CIK: {cik}")
                 break 
 
-nc.batch_upsert(target_table="form_13f_filing", records=filing_data, conflict_columns=['accession_number'])
+    nc.batch_upsert(target_table="form_13f_filing", records=filing_data, conflict_columns=['accession_number'])
+    print(f"====== {cik} is inserted ======")
