@@ -50,8 +50,9 @@ institution_profle_data = nc.select_query("SELECT cik FROM institution_profile")
 all_cik = [entry['cik'] for entry in institution_profle_data]
 print(all_cik)
 
+consecutive_failures = 0
 filing_data = []
-for cik in all_cik[5:]:
+for cik in all_cik[60:500]:
     for i in range(len(find(cik).get_filings(form="13F-HR"))):
     # for i in range(2):
         try:
@@ -64,7 +65,12 @@ for cik in all_cik[5:]:
                                 "total_holding": int(data.primary_form_information.summary_page.total_holdings)
                                 })
             print(f"success {cik} {i}")
+            consecutive_failures = 0
         except:
             print(f"fail {cik} {i}")
+            consecutive_failures += 1
+            if consecutive_failures > 2:
+                print(f"Skipping CIK: {cik}")
+                break 
 
 nc.batch_upsert(target_table="form_13f_filing", records=filing_data, conflict_columns=['accession_number'])
