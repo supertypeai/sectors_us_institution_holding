@@ -51,7 +51,7 @@ all_cik = [entry['cik'] for entry in institution_profle_data]
 print(all_cik)
 
 consecutive_failures = 0
-for cik in all_cik[5460:6000]:
+for cik in all_cik[6000:6500]:
     filing_data = []
     for i in range(len(find(cik).get_filings(form="13F-HR"))):
         try:
