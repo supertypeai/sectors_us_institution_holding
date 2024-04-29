@@ -106,7 +106,7 @@ WHERE
 latest_filings_list = nc.select_query(sql_query)
 print(latest_filings_list)
 
-for filing in latest_filings_list[10:]:
+for filing in latest_filings_list[37:]:
     df = find(filing['accession_number']).obj().infotable.sort_values('Value', ascending = False)[['Ticker','Value','SharesPrnAmount']]
     df['filing_id'] = filing['filing_id']
     df[['Value','SharesPrnAmount']] = df[['Value','SharesPrnAmount']].astype(int)
@@ -115,14 +115,13 @@ for filing in latest_filings_list[10:]:
     df['percentage'] = df['Value'] / total_shares * 100
     df = df.rename(columns={'Ticker': 'symbol', 'Value': 'value','SharesPrnAmount':'share'})
     df['filing_date'] = filing['filing_date'] 
+    df['filing_date'] = df['filing_date'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
     json_string = df.to_json(orient='records')
     recs = json.loads(json_string)
     try:
         nc.batch_upsert(target_table="form_13f_holdings", records=recs, conflict_columns=['filing_id','symbol'])
+        print(filing['accession_number'], 'success')
     except:
-        df['filing_date'] = df['filing_date'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
-        json_string = df.to_json(orient='records')
-        recs = json.loads(json_string)
-        nc.batch_upsert(target_table="form_13f_holdings", records=recs, conflict_columns=['filing_id','symbol'])
-    print(recs)
+        print(filing['accession_number'], 'fail')
+
 
