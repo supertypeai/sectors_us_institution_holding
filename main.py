@@ -106,7 +106,7 @@ WHERE
 latest_filings_list = nc.select_query(sql_query)
 print(latest_filings_list)
 
-for filing in latest_filings_list[9233:]:
+for filing in latest_filings_list[12513:]:
     df = find(filing['accession_number']).obj().infotable.sort_values('Value', ascending = False)[['Ticker','Value','SharesPrnAmount']]
     df['filing_id'] = filing['filing_id']
     df[['Value','SharesPrnAmount']] = df[['Value','SharesPrnAmount']].astype(int)
